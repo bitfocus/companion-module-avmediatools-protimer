@@ -6,7 +6,7 @@ export const GetActions = (base) => {
 	const baseUrl = `http://${base.config.host}:${base.config.port}/api/`
 	let actions = {
 		start: {
-			name: 'timer start',
+			name: 'Timer start',
 			options: [],
 			callback: () => {
 				try {
@@ -19,7 +19,7 @@ export const GetActions = (base) => {
 			},
 		},
 		stop: {
-			name: 'timer stop',
+			name: 'Timer stop',
 			options: [],
 			callback: () => {
 				try {
@@ -32,7 +32,7 @@ export const GetActions = (base) => {
 			},
 		},
 		pause: {
-			name: 'timer pause',
+			name: 'Timer pause',
 			options: [],
 			callback: () => {
 				try {
@@ -57,12 +57,35 @@ export const GetActions = (base) => {
 				}
 			},
 		},
+		timer_update: {
+			name: 'Timer update',
+			options: [
+				{
+					type: 'textinput',
+					label: 'Seconds (+/- seconds)',
+					id: 'seconds',
+					default: '+30',
+					useVariables: true,
+				},
+			],
+			callback: async (action, context) => {
+				let updateSeconds = await context.parseVariablesInString(action.options.seconds)
+				try {
+					base.log('debug', `Updating timer by ${updateSeconds} seconds`)
+					got.post(baseUrl + 'timer/update/' + updateSeconds)
+					base.updateStatus(InstanceStatus.Ok)
+				} catch (e) {
+					base.log('error', `HTTP POST Request failed (${e.message})`)
+					base.updateStatus(InstanceStatus.UnknownError, e.code)
+				}
+			},
+		},
 		blackout: {
 			name: 'Screen blackout',
 			options: [],
 			callback: () => {
 				try {
-					got.post(baseUrl + 'timer/toggle_blackout')
+					got.post(baseUrl + 'screen/toggle-blackout')
 					base.updateStatus(InstanceStatus.Ok)
 				} catch (e) {
 					base.log('error', `HTTP POST Request failed (${e.message})`)
