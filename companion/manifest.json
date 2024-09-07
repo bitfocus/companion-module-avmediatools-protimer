@@ -1,7 +1,7 @@
 {
 	"id": "avmediatools-protimer",
-	"name": "avmediatools-protimer",
-	"shortname": "protimer",
+	"name": "AVMediaTools-ProTimer",
+	"shortname": "ProTimer",
 	"description": "Timer module",
 	"version": "0.1.0",
 	"license": "MIT",

@@ -5,6 +5,8 @@ export const GetActions = (base) => {
 	if (!base.config.host) return
 	const baseUrl = `http://${base.config.host}:${base.config.port}/api/`
 	let actions = {
+		
+		// Timer
 		start: {
 			name: 'Timer start',
 			options: [],
@@ -45,11 +47,114 @@ export const GetActions = (base) => {
 			},
 		},
 		pause_toggle: {
-			name: 'Toggle pause resume',
+			name: 'Timer toggle pause/resume',
 			options: [],
 			callback: () => {
 				try {
 					got.post(baseUrl + 'timer/toggle_pause')
+					base.updateStatus(InstanceStatus.Ok)
+				} catch (e) {
+					base.log('error', `HTTP POST Request failed (${e.message})`)
+					base.updateStatus(InstanceStatus.UnknownError, e.code)
+				}
+			},
+		},
+		timer_set: {
+			name: 'Timer set',
+			options: [
+				{
+					type: 'textinput',
+					label: 'HH:MM:SS',
+					id: 'time',
+					default: '00:01:00',
+					useVariables: true,
+				},
+			],
+			callback: async (action, context) => {
+				let setTime = await context.parseVariablesInString(action.options.time)
+				try {
+					base.log('debug', `Set timer by ${setTime}`)
+					got.post(baseUrl + 'timer/set/' + setTime)
+					base.updateStatus(InstanceStatus.Ok)
+				} catch (e) {
+					base.log('error', `HTTP POST Request failed (${e.message})`)
+					base.updateStatus(InstanceStatus.UnknownError, e.code)
+				}
+			},
+		},
+		timer: {
+			name: 'Timer (countdown, countdown to zero)',
+			options: [
+				{
+					type: 'textinput',
+					label: 'HH:MM:SS',
+					id: 'time',
+					default: '00:01:00',
+					useVariables: true,
+				},
+				{
+					id: 'opt',
+					type: 'dropdown',
+					label: 'Select timer',
+					choices: [
+						{ id: 'countdown', label: 'Countdown' },
+						{ id: 'countdown_to_zero', label: 'Countdown to zero' },
+					],
+					default: 'countdown'
+				}
+			],
+			callback: async (action, context) => {
+				let setTime = await context.parseVariablesInString(action.options.time)
+				let opt = await context.parseVariablesInString(action.options.opt)
+				try {
+					base.log('debug', `Timer (${setTime})`)
+					got.post(baseUrl + 'timer/' + opt + '/' + setTime)
+					base.updateStatus(InstanceStatus.Ok)
+				} catch (e) {
+					base.log('error', `HTTP POST Request failed (${e.message})`)
+					base.updateStatus(InstanceStatus.UnknownError, e.code)
+				}
+			},
+		},
+		timer_countup: {
+			name: 'Timer countup',
+			options: [
+				{
+					type: 'textinput',
+					label: 'HH:MM:SS',
+					id: 'time',
+					default: '00:00:00',
+					useVariables: true,
+				},
+			],
+			callback: async (action, context) => {
+				let setTime = await context.parseVariablesInString(action.options.time)
+				try {
+					base.log('debug', `Countup (${setTime})`)
+					got.post(baseUrl + 'timer/countup/' + setTime)
+					base.updateStatus(InstanceStatus.Ok)
+				} catch (e) {
+					base.log('error', `HTTP POST Request failed (${e.message})`)
+					base.updateStatus(InstanceStatus.UnknownError, e.code)
+				}
+			},
+		},
+		timer_countdown_to_time: {
+			name: 'Timer countdown to time',
+			options: [
+				{
+					type: 'textinput',
+					label: 'HH:MM:SS',
+					id: 'time',
+					default: '00:00:00',
+					useVariables: true,
+				},
+			],
+			callback: async (action, context) => {
+				let setTime = await context.parseVariablesInString(action.options.time)
+				try {
+					base.log('debug', `Countdown to time (${setTime})`)
+					got.post(baseUrl + 'timer/countdown_to_time/' + setTime)
 					base.updateStatus(InstanceStatus.Ok)
 				} catch (e) {
 					base.log('error', `HTTP POST Request failed (${e.message})`)
@@ -80,12 +185,28 @@ export const GetActions = (base) => {
 				}
 			},
 		},
+
+		// Screen
 		blackout: {
 			name: 'Screen blackout',
-			options: [],
-			callback: () => {
+			options: [
+				{
+					id: 'val',
+					type: 'dropdown',
+					label: 'Select option',
+					choices: [
+						{ id: 'on', label: 'On' },
+						{ id: 'off', label: 'Off' },
+						{ id: 'toggle', label: 'Toggle' },
+					],
+					default: 'toggle'
+				}
+			],
+			callback: async (action, context) => {
+				let val = await context.parseVariablesInString(action.options.val)
 				try {
-					got.post(baseUrl + 'screen/toggle-blackout')
+					base.log('debug', `Blackout ${val}`)
+					got.post(baseUrl + 'screen/blackout/' + val)
 					base.updateStatus(InstanceStatus.Ok)
 				} catch (e) {
 					base.log('error', `HTTP POST Request failed (${e.message})`)
@@ -94,22 +215,81 @@ export const GetActions = (base) => {
 			},
 		},
 
-		// timer_set: {
-		// 	name: 'timer_set',
-		// 	options: [],
-		// 	callback: async (action, context) => {
-		// 		const { url, options } = await base.prepareQuery(context, action, true)
+		// Message
+		message_toggle: {
+			name: 'Message toggle',
+			options: [
+				{
+					id: 'val',
+					type: 'dropdown',
+					label: 'Select option',
+					choices: [
+						{ id: 'show', label: 'Show' },
+						{ id: 'hide', label: 'Hide' },
+						{ id: 'toggle', label: 'Toggle' },
+					],
+					default: 'toggle'
+				}
+			],
+			callback: async (action, context) => {
+				let val = await context.parseVariablesInString(action.options.val)
+				try {
+					base.log('debug', `message ${val}`)
+					got.post(baseUrl + 'message/' + val)
+					base.updateStatus(InstanceStatus.Ok)
+				} catch (e) {
+					base.log('error', `HTTP POST Request failed (${e.message})`)
+					base.updateStatus(InstanceStatus.UnknownError, e.code)
+				}
+			},
+		},
+		message_set: {
+			name: 'Message set',
+			options: [
+				{
+					type: 'textinput',
+					label: 'message',
+					id: 'message',
+					default: '',
+					useVariables: true,
+				},
+			],
+			callback: async (action, context) => {
+				let setMessage = await context.parseVariablesInString(action.options.message)
+				try {
+					base.log('debug', `Message set (${setMessage})`)
+					got.post(baseUrl + 'message/set/' + setMessage)
+					base.updateStatus(InstanceStatus.Ok)
+				} catch (e) {
+					base.log('error', `HTTP POST Request failed (${e.message})`)
+					base.updateStatus(InstanceStatus.UnknownError, e.code)
+				}
+			},
+		},
+		message_send: {
+			name: 'Message send',
+			options: [
+				{
+					type: 'textinput',
+					label: 'message',
+					id: 'message',
+					default: '',
+					useVariables: true,
+				},
+			],
+			callback: async (action, context) => {
+				let setMessage = await context.parseVariablesInString(action.options.message)
+				try {
+					base.log('debug', `Message send (${setMessage})`)
+					got.post(baseUrl + 'message/send/' + setMessage)
+					base.updateStatus(InstanceStatus.Ok)
+				} catch (e) {
+					base.log('error', `HTTP POST Request failed (${e.message})`)
+					base.updateStatus(InstanceStatus.UnknownError, e.code)
+				}
+			},
+		},
 
-		// 		try {
-		// 			await got.post(url, options)
-
-		// 			base.updateStatus(InstanceStatus.Ok)
-		// 		} catch (e) {
-		// 			base.log('error', `HTTP POST Request failed (${e.message})`)
-		// 			base.updateStatus(InstanceStatus.UnknownError, e.code)
-		// 		}
-		// 	},
-		// },
 	}
 	return actions
 }
