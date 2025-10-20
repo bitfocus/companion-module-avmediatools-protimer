@@ -11,6 +11,10 @@
 		{
 			"name": "Sander Kamp",
 			"email": "info@avmediatools.com"
+		},
+		{
+			"name": "Jeffrey Davidsz",
+			"email": "jeffrey.davidsz@vicreo.eu"
 		}
 	],
 	"runtime": {
@@ -20,7 +24,7 @@
 		"entrypoint": "../main.js"
 	},
 	"legacyIds": [],
-	"manufacturer": "avmediatools",
-	"products": ["protimer"],
+	"manufacturer": "AVMediatools",
+	"products": ["ProTimer"],
 	"keywords": ["protimer", "timer"]
 }

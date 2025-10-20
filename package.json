@@ -9,7 +9,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/bitfocus/companion-module-your-module-name.git"
+		"url": "git+https://github.com/bitfocus/companion-module-avmediatools-protimer.git"
 	},
 	"dependencies": {
 		"@companion-module/base": "~1.11.3",
