@@ -3,18 +3,18 @@
 	"name": "AVMediaTools-ProTimer",
 	"shortname": "ProTimer",
 	"description": "Timer module",
-	"version": "0.1.0",
+	"version": "1.3.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-avmediatools-protimer.git",
 	"bugs": "https://github.com/bitfocus/companion-module-avmediatools-protimer/issues",
 	"maintainers": [
 		{
-			"name": "Jeffrey Davidsz",
-			"email": "jeffrey.davidsz@vicreo.eu"
+			"name": "Sander Kamp",
+			"email": "info@avmediatools.com"
 		}
 	],
 	"runtime": {
-		"type": "node18",
+		"type": "node22",
 		"api": "nodejs-ipc",
 		"apiVersion": "0.0.0",
 		"entrypoint": "../main.js"
@@ -22,5 +22,5 @@
 	"legacyIds": [],
 	"manufacturer": "avmediatools",
 	"products": ["protimer"],
-	"keywords": []
+	"keywords": ["protimer", "timer"]
 }
